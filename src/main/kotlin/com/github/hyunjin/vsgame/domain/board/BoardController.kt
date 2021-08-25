@@ -1,6 +1,5 @@
-package com.github.hyunjin.vsgame.board
+package com.github.hyunjin.vsgame.domain.board
 
-import lombok.RequiredArgsConstructor
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -11,23 +10,30 @@ import org.springframework.web.bind.annotation.RequestMapping
 
 @Controller
 @RequestMapping("/board")
-@RequiredArgsConstructor
 class BoardController(
-    val repo: BoardRepository
+    private val service: BoardService
 ) {
 
     @GetMapping
     fun getBoards(): ResponseEntity<List<Board>> {
-        return ResponseEntity(repo.findAll(), HttpStatus.OK)
+        return ResponseEntity(service.findAll(), HttpStatus.OK)
+    }
+
+    @GetMapping("/{id}")
+    fun getBoardById(id: Long): ResponseEntity<Board> {
+        val board = service.getBoardById(id)
+        return if (board != null) {
+            ResponseEntity(board, HttpStatus.OK)
+        } else {
+            ResponseEntity(null, HttpStatus.NOT_FOUND)
+        }
     }
 
     @PostMapping
     fun saveBoard(@RequestBody dto: BoardSaveRequest): ResponseEntity<HttpStatus> {
-        val newBoard = Board(id = null, title = dto.title, writer = dto.writer, description = dto.description)
-        repo.save(newBoard)
-        return if (newBoard.id != null) {
+        return if (service.saveBoard(dto)) {
             ResponseEntity(HttpStatus.CREATED)
-        } else {
+        }else {
             ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
@@ -36,5 +42,13 @@ class BoardController(
 data class BoardSaveRequest(
     val title: String,
     val writer: String?,
-    val description: String?
-)
+    val description: String?,
+    val contents: List<Content>
+) {
+    fun toEntity() = Board(
+        title = this.title,
+        writer = this.writer,
+        description = this.description,
+        contents = this.contents
+    )
+}
