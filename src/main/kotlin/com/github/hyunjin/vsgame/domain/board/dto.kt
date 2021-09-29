@@ -9,14 +9,12 @@ data class BoardSaveRequest(
 ) {
     fun toEntity(): Board {
         val board = Board(
-            id = this.id,
-            title = this.title,
-            writer = this.writer,
-            description = this.description
+            id = id ?: 0L,
+            title = title,
+            writer = writer,
+            description = description,
         )
-        for (c in this.contents) {
-            board.addContent(Content(description = c.description, photo_url = c.photo_url))
-        }
+        board.setContents(contents.map { Content(description = it.description, photo_url = it.photo_url) } as MutableList<Content>)
         return board
     }
 }

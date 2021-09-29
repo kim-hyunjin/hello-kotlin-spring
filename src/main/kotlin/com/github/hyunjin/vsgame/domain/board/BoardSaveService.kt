@@ -13,13 +13,12 @@ class BoardSaveService(
         return if (dto.id == null) {
             boardRepository.save(dto.toEntity())
         } else {
+            val newContents = dto.contents.map { Content(description = it.description, photo_url = it.photo_url) }
             boardFindService.findById(dto.id).apply {
                 this.title = dto.title
                 this.writer = dto.writer
                 this.description = dto.description
-                for (c in dto.contents) {
-                    this.addContent(Content(description = c.description, photo_url = c.photo_url))
-                }
+                this.setContents(newContents as MutableList<Content>)
             }
         }
     }

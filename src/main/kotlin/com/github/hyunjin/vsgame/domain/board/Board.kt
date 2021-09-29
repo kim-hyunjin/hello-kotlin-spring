@@ -2,9 +2,17 @@ package com.github.hyunjin.vsgame.domain.board
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.hibernate.annotations.CreationTimestamp
-import org.springframework.data.jpa.repository.JpaRepository
 import java.time.LocalDateTime
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.SequenceGenerator
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.OneToMany
+import javax.persistence.FetchType
+import javax.persistence.CascadeType
+
 
 @Entity
 @SequenceGenerator(
@@ -13,29 +21,33 @@ import javax.persistence.*
     initialValue = 1, allocationSize = 50
 )
 class Board(
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "BOARD_SEQ_GENERATOR")
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "BOARD_SEQ_GENERATOR")
     @Column(name = "BOARD_ID")
-    var id: Long? = null,
+    val id: Long = 0L,
 
     @Column(nullable = false)
     var title: String,
+
     var writer: String?,
+
     var description: String?
 ) {
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JsonIgnore
-    var contents: MutableList<Content> = ArrayList()
+    private var _contents: MutableList <Content> = mutableListOf()
+    val contents: List<Content>
+        get() = _contents
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     lateinit var createdAt: LocalDateTime
+        protected set
 
-    fun addContent(content: Content) {
-        this.contents.add(content)
-        if (content.board != this) {
-            content.board = this
+    fun setContents(contents: MutableList<Content>) {
+        this._contents = contents
+        for (c in contents) {
+            c.board = this
         }
     }
 }
-
-interface BoardRepository : JpaRepository<Board, Long>

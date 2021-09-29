@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class VsgameApplication
 
 fun main(args: Array<String>) {
-	runApplication<VsgameApplication>(*args)
+    runApplication<VsgameApplication>(*args)
 }

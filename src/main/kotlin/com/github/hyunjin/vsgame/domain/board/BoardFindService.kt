@@ -1,5 +1,7 @@
 package com.github.hyunjin.vsgame.domain.board
 
+import javassist.NotFoundException
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -11,9 +13,10 @@ class BoardFindService(
 ) {
 
     fun findById(boardId: Long): Board = boardRepository.findById(boardId).orElseThrow {
-        throw IllegalArgumentException("$boardId 번 아이디의 게시글이 존재하지 않습니다.")
+        throw NotFoundException("'$boardId'번 아이디의 게시글이 존재하지 않습니다.")
     }
 
-    fun findPageable(pageable: Pageable) = boardRepository.findAll(pageable)
-
+    fun findPageable(pageable: Pageable): Page<Board> {
+        return boardRepository.findAll(pageable)
+    }
 }
