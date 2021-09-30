@@ -1,6 +1,7 @@
 package com.github.hyunjin.vsgame.domain.board
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.hibernate.annotations.BatchSize
 import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
 import javax.persistence.Column
@@ -35,6 +36,7 @@ class Board(
 ) {
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JsonIgnore
+    @BatchSize(size = 20)
     private var _contents: MutableList <Content> = mutableListOf()
     val contents: List<Content>
         get() = _contents
