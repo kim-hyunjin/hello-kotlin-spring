@@ -1,1 +1,1 @@
-rootProject.name = "vsgame"
+rootProject.name = "balance-game-backend"

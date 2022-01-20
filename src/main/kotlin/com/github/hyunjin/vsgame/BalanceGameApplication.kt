@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class VsgameApplication
+class BalanceGameApplication
 
 fun main(args: Array<String>) {
-    runApplication<VsgameApplication>(*args)
+    runApplication<BalanceGameApplication>(*args)
 }
