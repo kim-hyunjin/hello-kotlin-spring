@@ -30,6 +30,8 @@ class Board(
     @Column(nullable = false)
     var title: String,
 
+    var thumbnail: String?,
+
     var writer: String?,
 
     var description: String?
